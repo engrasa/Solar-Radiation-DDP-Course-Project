@@ -1,0 +1,73 @@
+---
+title: "Solar Radiation Prediction - Developing Data Products Project"
+author: "Alvin Alon"
+date: "February 6, 2019"
+output: slidy_presentation
+---
+## SOLAR RADIATION PREDICTION
+
+### Discussion 
+
+> Solar Radiation is one of the main factors that determines the energy output of a photovoltaic system (Solar Panel). Solar radiation varies nonlinearly due to atmospheric events such as cloudy weather, rain, humudity etc. Therefore estimation of solar radiation is an attractive issue in solar energy field. Predicting solar radiation helps to predict the number of solar panels needed for a certain households.In other words,
+
+- "Solar Radiation helps determines your savings if you use solar power for self-consumption."
+- "Radiation determines your income if you are investing in solar power to sell the electricity."
+
+---
+
+## DATA DESCRIPTION
+
+###  HI-SEAS Weather Station
+
+> The weather data tells you how much sun is hitting the solar panels. These datasets are meteorological data from the HI-SEAS weather station from four months (September through December 2016) between Mission IV and Mission V.
+
+```{r}
+solarRadiationCsv <- read.csv("solarRadiation.csv");
+summary(solarRadiationCsv)
+```
+### Source
+> HI-SEAS weather station from four months (September through December 2016) between Mission IV and Mission V.
+
+---
+
+## Dataset - Format
+
+**A data frame with 35093 observations on 6 variables.**
+
+| Index | Field | Detail |
+------- | ----- | ------ |
+| [, 1] | Hg | Barometric pressure |
+| [, 2]  | Percentl | Humidity |
+| [, 3]	| Fahrenheit | Temperature |
+| [, 4]	| Degrees | Wind Direction |
+| [, 5]	| Miles Per Hour | Wind Speed |
+| [, 6]	| Watts Per Meter^2 | Solar Radiation |
+
+---
+
+## Server.R  Solar Radiation Prediction
+
+Full Shiny App Link - https://engrasa.shinyapps.io/DDPweek4Project/
+Github R Codes Link - https://engrasa.shinyapps.io/DDPweek4Project/
+```{r}
+solarRadiationCsv <- read.csv("solarRadiation.csv");
+solarR_DF <- data.frame(baro = solarRadiationCsv$barometric_pressure[1:6], humi = solarRadiationCsv$humidity[1:6], temp = solarRadiationCsv$temperature[1:6], wind_d = solarRadiationCsv$wind_direction[1:6], wind_s = solarRadiationCsv$wind_speed[1:6], solarR = solarRadiationCsv$solar_radiation[1:6]);
+solarR_DF
+
+solarRadModel_lm <- lm(solarR ~ baro+humi+temp+wind_d+wind_s, data=solarR_DF)
+NewBaro <- data.frame(baro=30.46)
+NewHumi <- data.frame(humi=79)
+NewTemp <- data.frame(temp=48)
+NewWindD <- data.frame(wind_d=177)
+NewWindS <- data.frame(wind_s=9)
+
+NewBaro
+NewHumi
+NewTemp
+NewWindD
+NewWindS
+
+solarR_Value <- predict(solarRadModel_lm, c(NewBaro, NewHumi, NewTemp, NewWindD, NewWindS))
+solarR_Value
+```
+
